@@ -4,23 +4,24 @@ use warnings;
 
 #
 # Description:
-#   This script will process chess games copied from lichess.com into a PGN
-# format for Scid.
+#   This script will convert chess games copied from lichess.com to a text files
+# to a file in PGN format compatible with SCID and other chess viewer apps.
 #
 # Author:
-#   M.R. Smith - 13-Mar-2021
+#   M.R. Smith - 25-Apr-2021
 #
 # Usage:
 #   perl pgn-transform.pl [<inpfile>]
 #
 # Design:
-#   Parse a text file containing games in lichess format and a result header
-# and write an output PGN file readable by SCID.
+#   Parse a text file (defauts to games.txt) containing games in lichess format
+# and write an output PGN file (defaults to the same names as the input file
+# with .pgn extension).  For each game there is a header showing the date,
+# if I played white or black and the result and a comment.
 #
 # The game file contains a game represented by just 2 lines as follows:
-#
-# <game-details-header>
-# <game>
+#   <game-details>
+#   <game-moves>
 #
 # The above lines are defined as follows:
 #   <game-details> ::= <date><my-colour><result>[<comment>]
@@ -33,9 +34,9 @@ use warnings;
 #           <draw> ::= .5-.5
 #           <open> ::= *
 #
-#           <game> ::= <move>[<move>]
+#     <game-moves> ::= <move>[<move>]
 #           <move> ::= <move-num><white-move>[<black-move>]
-#       <move-num> ::= [1..n]               ! Integer > 1
+#       <move-num> ::= [1..n]
 #     <white-move> ::= <ply>
 #     <black-move> ::= <ply>
 #            <ply> ::= [<piece>][<file>][<rank>]<location>[<promotion>][<check>][<double-check>][<checkmate>] | <special-move>
@@ -46,12 +47,12 @@ use warnings;
 #      <promotion> ::= <equals><promoted-piece>
 #         <equals> ::= =
 # <promoted-piece> ::= Q | B | N | R
-#          <check> ::= +
-#   <double-check> ::= ++
-#      <checkmate> ::= #
-#   <special-move> ::= O-O | O-O-O      ! Castle Kingside and Queenside
+#          <check> ::= +              ! Check
+#   <double-check> ::= ++             ! Double-Check
+#      <checkmate> ::= #              ! Mate
+#   <special-move> ::= O-O | O-O-O    ! Castle Kingside or Queenside
 #
-# So a list of moves can be quite complex.  Here are some examples:
+# So a game and its moves can be quite complex.  Here are some examples:
 #
 # 21.03.15W1-0
 # 1e4c52Nc3d63Nf3g64d4cxd45Nxd4Bg76Bb5+Bd77Bg5Bxb58Ndxb5Qa59O-Oa610Nd4Qxg511f4Qc5
@@ -59,44 +60,93 @@ use warnings;
 # 21.03.19W1-0
 # 1d4e52dxe5d53exd6Qxd64Qxd6Bxd65Nc3Bb46Bf4Nf67Nf3O-O8Bxc7Bg49h3Bxf310gxf3Nc611Rg1Bxc3+12bxc3Rad8
 #
-# The core of the program is to define a regular expression (regex) that will
-# match any of the possible legal moves.  After digesting the anaysis above and
-# some experimentation, I came up with the following regular expression.
+# The core of the problem/program is to define a regular expression (regex)
+# that will match any of the possible legal moves.  After much anaysis and
+# experimentation, I came up with this.
 #
+# Note some patterns are subsets of others, Kingside is a subset of Queenside
+# castling for example.  We must therefore put the longer expression first so
+# we're testing for the more complex case first.
+#
+
+#
+# The regex breaks down into the following matches:
+#  1. Queenside castling: ^O-O-O
+#  2. Kingside castling: ^O-O
+#  3. Piece captures WITH a rank or file to resolve ambiquity, WITH promotion
+#     and optional check, double-check or mate:
+#       ^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]*
+#  4. Piece captures WITHOUT a rank or file to resolve ambiquity, WITH promotion
+#     and optional check, double-check or mate:
+#       ^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]*
+#  5. Piece captures WITH a rank or file to resolve ambiquity, WITHOUT promotion
+#     and optional check, double-check or mate:
+#       ^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]*
+#  6. Piece captures WITHOUT a rank or file to resolve ambiquity, WITHOUT
+#     promotion and optional check, double-check or mate:
+#       ^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]*
+#  7. Move (non-capture) WITH promotion and optional check, double-check or
+#     mate:
+#       ^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][=][QBNR][\\+#]*|
+#  8. Move (non-capture) WITHOUT promotion and optional check, double-check or
+#     mate:
+#       ^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][\\+#]*";
+#
+#my $regex = "^O-O-O|^O-O|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][\\+#]*";
+#
+# Modification History:
+# Version  Date       Developer     Modification
+#  1.0     13-Mar-21  M.R. Smith    Initial Verion, no statistics.
+#  1.1     23-Apr-21  M.R. Smith    Fixed regex to recognise take with promotion
+#                                   and optional check, double-check or mate.
+#  1.2     25-Apr-21  M.R. Smith    Add statistics to count wins and draws.
+#
+
 my $regex = "^O-O-O|^O-O|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][\\+#]*";
 
 #
 # To Do:
 # - Prune down temporary variables.
-# - Add a hash of dates and frequency and out as a CSV.
 #
 
 # Process the command line.
+# Support 2 parameters, input file of games and debug flag.
 my ($inpFile, $debug) = @ARGV;
 if (not defined $inpFile) {
   $inpFile = "games.txt";
-  #die "Need an input file of games to process\n";
 }
 if (not defined $debug) { $debug = 0; }
 
 # Variables.
-my $title = "PGN Game Transformer for Lichess game strings V1.1";
-my $outFile = "games.pgn";
+my $title = "PGN Game Transformer for Lichess game strings V1.2";
+my ($fileName, $fileType) = split(/\./, $inpFile);
+my $outFile = "$fileName.pgn";
+my $csvFile = "$fileName.csv";
 my $gameCount = 0;
 my $totalWins = 0;
-my %dateHash = ();
+my $totalWinsAsWhite = 0;
+my $totalWinsAsBlack = 0;
+my $totalDraws = 0;
+my %gamesHash = ();
 my %winsHash = ();
+my %winsAsWhiteHash = ();
+my %winsAsBlackHash = ();
+my %drawsHash = ();
 
 print "$title Starting...\n";
 print "Input Game file: $inpFile\n";
 print "Output PGN file: $outFile\n";
+print "Output CSV file: $csvFile\n";
 print "Processing...\n";
 
-# Open input file.
+# Open the input text file of games.
 open INP, $inpFile or die "Can't open $inpFile\n";
 
-# Open output file.
+# Create the output text file of converted PGN.
 open OUT, ">$outFile" or die "Can't open $outFile\n";
+
+# Create the output CSV file for stats.
+open CSV, ">$csvFile" or die "Can't open $csvFile\n";
 
 # Read and process input file writing to output.
 my $moveNum = 1;
@@ -149,17 +199,33 @@ while (my $line = <INP>) {
   }
 }
 
+# Print some stats.
+my $pcentWins = sprintf("%.1f", $totalWins * 100 / $gameCount);
+my $pcentWinsAsWhite = sprintf("%.1f", $totalWinsAsWhite * 100 / $gameCount);
+my $pcentWinsAsBlack = sprintf("%.1f", $totalWinsAsBlack * 100 / $gameCount);
+my $pcentDraws = sprintf("%.1f", $totalDraws * 100 / $gameCount);
+
+print "$gameCount played, $totalWins won ($pcentWins%), $totalWinsAsWhite won as white ($pcentWinsAsWhite%), $totalWinsAsBlack won as black ($pcentWinsAsBlack%), $totalDraws draws ($pcentDraws%)\n";
+print CSV "Date, Played, Won, Won as White, Won as Black, Drawn\n";
+
+foreach my $key (sort keys %gamesHash) {
+  print "$key - $gamesHash{$key} played, $winsHash{$key} won, $winsAsWhiteHash{$key} as white, $winsAsBlackHash{$key} as black, $drawsHash{$key} draws\n";
+  print CSV "$key, $gamesHash{$key}, $winsHash{$key}, $winsAsWhiteHash{$key}, $winsAsBlackHash{$key}, $drawsHash{$key}\n";
+}
+print CSV "\n";
+print CSV ", $gameCount played, $totalWins won ($pcentWins%), $totalWinsAsWhite won as white ($pcentWinsAsWhite%), $totalWinsAsBlack won as black ($pcentWinsAsBlack%), $totalDraws draws ($pcentDraws%)\n";
+
 # Close files.
+close CSV;
 close OUT;
 close INP;
 
-my $pcentWins = sprintf("%.1f", $totalWins * 100 / $gameCount);
-print "$gameCount games processed, $totalWins wins ($pcentWins%)\n";
-foreach my $key (sort keys %dateHash) {
-  print "$key played $dateHash{$key} games, $winsHash{$key} won\n";
-}
+# Done.
 print "$title Complete\n";
 
+#
+# Subroutines.
+#
 sub printHeader {
   my ($gameCount, $result, $resultRef, $commentRef) = @_;
 
@@ -177,7 +243,6 @@ sub printHeader {
   my $date = "20" . substr($result, 0, 8);
   my $playingWhite = 0;
   my $playingBlack = 0;
-  my $gameWon = 0;
   my $totalWon = 0;
 
   &printLine("[Event \"lichess.com\"]");
@@ -206,36 +271,79 @@ sub printHeader {
     &printLine("[Result \"1-0\"]");
     $$resultRef = "1-0";
     $$commentRef = substr($result, 12);
-    if ($playingWhite) { $gameWon = 1; }
+    # Update the stats.
+    if ($playingWhite) {
+      &updateStats($date, 1, 0, 0);
+    }
   }
   if (substr($result, 9, 1) eq "0") {
     &printLine("[Result \"0-1\"]");
     $$resultRef = "0-1";
     $$commentRef = substr($result, 12);
-    if ($playingBlack) { $gameWon = 1; }
+    # Update the stats.
+    if ($playingBlack) {
+      &updateStats($date, 0, 1, 0);
+    }
   }
-  if (substr($result, 9, 1) eq ".") {
+  if (substr($result, 9, 5) eq ".5-.5") {
     &printLine("[Result \"1/2-1/2\"]");
     $$resultRef = "1/2-1/2";
     $$commentRef = substr($result, 14);
+    # Update the stats.
+    &updateStats($date, 0, 0, 1);
   }
 
-  # Update the date and wins hash to count the games per day.
-  if (exists($dateHash{$date})) {
-    $dateHash{$date} = $dateHash{$date} + 1;
-  } else {
-    $dateHash{$date} = 1;
+
+  return;
+}
+
+sub updateStats {
+  my ($date, $w, $b, $d) = @_;
+  # Update the stats to count the wins as white and black and draws each day.
+
+  # Zero hashes for the given date.
+  if (!exists($gamesHash{$date})) {
+    $gamesHash{$date} = 0;
   }
-  if ($gameWon) {
+  if (!exists($winsHash{$date})) {
+    $winsHash{$date} = 0;
+  }
+  if (!exists($winsAsWhiteHash{$date})) {
+    $winsAsWhiteHash{$date} = 0;
+  }
+  if (!exists($winsAsBlackHash{$date})) {
+    $winsAsBlackHash{$date} = 0;
+  }
+  if (!exists($drawsHash{$date})) {
+    $drawsHash{$date} = 0;
+  }
+
+  # Games Played
+  $gamesHash{$date} = $gamesHash{$date} + 1;
+
+  # Note Wins.
+  if ($w || $b) {
     $totalWins++;
-    if (exists($winsHash{$date})) {
-      $winsHash{$date} = $winsHash{$date} + 1;
-    } else {
-      $winsHash{$date} = 1;
+    $winsHash{$date} = $winsHash{$date} + 1;
+
+    # Wins as White.
+    if ($w) {
+      $totalWinsAsWhite++;
+      $winsAsWhiteHash{$date} = $winsAsWhiteHash{$date} + 1;
+    }
+
+    # Wins as Black.
+    if ($b) {
+      $totalWinsAsBlack++;
+      $winsAsBlackHash{$date} = $winsAsBlackHash{$date} + 1;
     }
   }
 
-  return;
+  # Draws.
+  if ($d) {
+    $totalDraws++;
+    $drawsHash{$date} = $drawsHash{$date} + 1;
+  }
 }
 
 sub printLine {
@@ -298,14 +406,13 @@ sub extractMove {
 }
 
 sub pause {
-  print "Press \"c\" to continue, \"e\" to exit: ";
+  print "Press C to continue or E to exit: ";
   while (1) {
     my $input = lc(getc());
     chomp ($input);
     if ($input eq 'c') {
       last;
-    }
-    elsif ($input eq 'e') {
+    } elsif ($input eq 'e') {
       exit 1;
     }
   }
