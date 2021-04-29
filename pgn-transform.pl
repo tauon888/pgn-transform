@@ -8,7 +8,7 @@ use warnings;
 # to a file in PGN format compatible with SCID and other chess viewer apps.
 #
 # Author:
-#   M.R. Smith - 25-Apr-2021
+#   M.R. Smith - 13-Mar-2021
 #
 # Usage:
 #   perl pgn-transform.pl [<inpfile>]
@@ -100,6 +100,7 @@ use warnings;
 #  1.1     23-Apr-21  M.R. Smith    Fixed regex to recognise take with promotion
 #                                   and optional check, double-check or mate.
 #  1.2     25-Apr-21  M.R. Smith    Add statistics to count wins and draws.
+#  1.3     28-Apr-21  M.R. Smith    Condense stats to a single hash.
 #
 
 my $regex = "^O-O-O|^O-O|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][\\+#]*";
@@ -118,20 +119,11 @@ if (not defined $inpFile) {
 if (not defined $debug) { $debug = 0; }
 
 # Variables.
-my $title = "PGN Game Transformer for Lichess game strings V1.2";
+my $title = "PGN Game Transformer for Lichess game strings V1.3";
 my ($fileName, $fileType) = split(/\./, $inpFile);
 my $outFile = "$fileName.pgn";
 my $csvFile = "$fileName.csv";
-my $gameCount = 0;
-my $totalWins = 0;
-my $totalWinsAsWhite = 0;
-my $totalWinsAsBlack = 0;
-my $totalDraws = 0;
-my %gamesHash = ();
-my %winsHash = ();
-my %winsAsWhiteHash = ();
-my %winsAsBlackHash = ();
-my %drawsHash = ();
+my %stats = ();
 
 print "$title Starting...\n";
 print "Input Game file: $inpFile\n";
@@ -194,24 +186,42 @@ while (my $line = <INP>) {
       }
       &printLine($fin);
       &printNewline();
-      $gameCount++;
     }
   }
 }
 
-# Print some stats.
+# Print some stats and calculate totals.
+my $gameCount = 0;
+my $totalWins = 0;
+my $totalWinsAsWhite = 0;
+my $totalWinsAsBlack = 0;
+my $totalDraws = 0;
+print "Date        Played  Won  As White  As Black  Draws\n";
+print "==========  ======  ===  ========  ========  =====\n";
+foreach my $date (sort keys %stats) {
+  my ($games, $winsAsWhite, $winsAsBlack, $draws) = split(/\|/, $stats{$date});
+  my $wins = $winsAsWhite + $winsAsBlack;
+  #print "$date - $games played, $wins won, $winsAsWhite as white, $winsAsBlack as black, $draws draws\n";
+  print sprintf("$date  %4s%6s%8s%10s%8s", $games, $wins, $winsAsWhite, $winsAsBlack, $draws) . "\n";
+  print CSV "$date, $games, $wins, $winsAsWhite, $winsAsBlack, $draws\n";
+
+  # Running totals.
+  $gameCount += $games;
+  $totalWins += $wins;
+  $totalWinsAsWhite += $winsAsWhite;
+  $totalWinsAsBlack += $winsAsBlack;
+  $totalDraws += $draws;
+}
+
+# Compute percentages.
 my $pcentWins = sprintf("%.1f", $totalWins * 100 / $gameCount);
 my $pcentWinsAsWhite = sprintf("%.1f", $totalWinsAsWhite * 100 / $gameCount);
 my $pcentWinsAsBlack = sprintf("%.1f", $totalWinsAsBlack * 100 / $gameCount);
 my $pcentDraws = sprintf("%.1f", $totalDraws * 100 / $gameCount);
 
+# Print summary.
 print "$gameCount played, $totalWins won ($pcentWins%), $totalWinsAsWhite won as white ($pcentWinsAsWhite%), $totalWinsAsBlack won as black ($pcentWinsAsBlack%), $totalDraws draws ($pcentDraws%)\n";
 print CSV "Date, Played, Won, Won as White, Won as Black, Drawn\n";
-
-foreach my $key (sort keys %gamesHash) {
-  print "$key - $gamesHash{$key} played, $winsHash{$key} won, $winsAsWhiteHash{$key} as white, $winsAsBlackHash{$key} as black, $drawsHash{$key} draws\n";
-  print CSV "$key, $gamesHash{$key}, $winsHash{$key}, $winsAsWhiteHash{$key}, $winsAsBlackHash{$key}, $drawsHash{$key}\n";
-}
 print CSV "\n";
 print CSV ", $gameCount played, $totalWins won ($pcentWins%), $totalWinsAsWhite won as white ($pcentWinsAsWhite%), $totalWinsAsBlack won as black ($pcentWinsAsBlack%), $totalDraws draws ($pcentDraws%)\n";
 
@@ -300,49 +310,20 @@ sub printHeader {
 sub updateStats {
   my ($date, $w, $b, $d) = @_;
   # Update the stats to count the wins as white and black and draws each day.
+  # We are given a delta so update the hash here.
+  # Hash contains: Games | Wins as White | Wins as Black | Draws.
+  # If this is a new date then update with the 1st game's result.
 
   # Zero hashes for the given date.
-  if (!exists($gamesHash{$date})) {
-    $gamesHash{$date} = 0;
-  }
-  if (!exists($winsHash{$date})) {
-    $winsHash{$date} = 0;
-  }
-  if (!exists($winsAsWhiteHash{$date})) {
-    $winsAsWhiteHash{$date} = 0;
-  }
-  if (!exists($winsAsBlackHash{$date})) {
-    $winsAsBlackHash{$date} = 0;
-  }
-  if (!exists($drawsHash{$date})) {
-    $drawsHash{$date} = 0;
-  }
-
-  # Games Played
-  $gamesHash{$date} = $gamesHash{$date} + 1;
-
-  # Note Wins.
-  if ($w || $b) {
-    $totalWins++;
-    $winsHash{$date} = $winsHash{$date} + 1;
-
-    # Wins as White.
-    if ($w) {
-      $totalWinsAsWhite++;
-      $winsAsWhiteHash{$date} = $winsAsWhiteHash{$date} + 1;
-    }
-
-    # Wins as Black.
-    if ($b) {
-      $totalWinsAsBlack++;
-      $winsAsBlackHash{$date} = $winsAsBlackHash{$date} + 1;
-    }
-  }
-
-  # Draws.
-  if ($d) {
-    $totalDraws++;
-    $drawsHash{$date} = $drawsHash{$date} + 1;
+  if (!exists($stats{$date})) {
+    $stats{$date} = "1|$w|$b|$d";
+  } else {
+    my ($games, $winsAsWhite, $winsAsBlack, $draws) = split(/\|/, $stats{$date});
+    $games++;
+    if ($w) { $winsAsWhite++; }
+    if ($b) { $winsAsBlack++; }
+    if ($d) { $draws++; }
+    $stats{$date} = "$games|$winsAsWhite|$winsAsBlack|$draws";
   }
 }
 
