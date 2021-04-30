@@ -1,23 +1,22 @@
-#
 # pgn-transform.pl
-#
-# Description:
-#   This script will convert chess games copied from lichess.com to a text files
-# to a file in PGN format compatible with SCID and other chess viewer apps.
-#
-# Author:
-#   M.R. Smith - 13-Mar-2021
-#
-# Usage:
-#   perl pgn-transform.pl [<inpfile>]
-#
-# Design:
-#   Parse a text file (defauts to games.txt) containing games in lichess format
-# and write an output PGN file (defaults to the same names as the input file
-# with .pgn extension).  For each game there is a header showing the date,
-# if I played white or black and the result and a comment.
-#
-# The game file contains a game represented by just 2 lines as follows:
+
+## Description:
+This script will convert chess games copied from lichess.com to a text files
+to a file in PGN format compatible with SCID and other chess viewer apps.
+
+## Author:
+   M.R. Smith - 13-Mar-2021
+
+## Usage:
+   perl pgn-transform.pl [<inpfile>]
+
+## Design:
+Parse a text file (defauts to games.txt) containing games in lichess format
+and write an output PGN file (defaults to the same names as the input file
+with .pgn extension).  For each game there is a header showing the date,
+if I played white or black and the result and a comment.
+
+ The game file contains a game represented by just 2 lines as follows:
 #   <game-details>
 #   <game-moves>
 #
