@@ -98,7 +98,7 @@ The regex breaks down into the following matches:
 
 ## Modification History:
 | Version | Date      | Developer   | Modification Details                            |
-|---------|-----------|-------------|-------------------------------------------------|
+|:-------:|:---------:|:------------|:------------------------------------------------|
 |  1.0    | 13-Mar-21 | M.R. Smith  | Initial Verion, no statistics.                  |
 |  1.1    | 23-Apr-21 | M.R. Smith  | Fixed regex to recognise take with promotion and optional check, double-check or mate. |
 |  1.2    | 25-Apr-21 | M.R. Smith  | Add statistics to count wins and draws.|
