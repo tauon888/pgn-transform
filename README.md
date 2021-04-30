@@ -16,30 +16,30 @@ and write an output PGN file (defaults to the same names as the input file
 with .pgn extension).  For each game there is a header showing the date,
 if I played white or black and the result and a comment.
 
- The game file contains a game represented by just 2 lines as follows:
-#   <game-details>
-#   <game-moves>
-#
-# The above lines are defined as follows:
-#   <game-details> ::= <date><my-colour><result>[<comment>]
-#           <date> ::= <game-date>
-#      <game-date> ::= YY.MM.DD
-#      <my-colour> ::= W | B
-#         <result> ::= <win-for-white> | <win-for-black> | <draw> | <open>
-#  <win-for-white> ::= 1-0
-#  <win-for-black> ::= 0-1
-#           <draw> ::= .5-.5
-#           <open> ::= *
-#
-#     <game-moves> ::= <move>[<move>]
-#           <move> ::= <move-num><white-move>[<black-move>]
-#       <move-num> ::= [1..n]
-#     <white-move> ::= <ply>
-#     <black-move> ::= <ply>
-#            <ply> ::= [<piece>][<file>][<rank>]<location>[<promotion>][<check>][<double-check>][<checkmate>] | <special-move>
-#          <piece> ::= K | Q | B | N | R
-#           <file> ::= a | b | c | d | e | f | g | h
-#           <rank> ::= 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+The game file contains a game represented by just 2 lines as follows:
+   <game-details>\
+   <game-moves>\
+\
+  The above lines are defined as follows:\
+   <game-details> ::= <date><my-colour><result>[<comment>]\
+           <date> ::= <game-date>\
+      <game-date> ::= YY.MM.DD\
+      <my-colour> ::= W | B\
+         <result> ::= <win-for-white> | <win-for-black> | <draw> | <open>\
+  <win-for-white> ::= 1-0\
+  <win-for-black> ::= 0-1\
+           <draw> ::= .5-.5\
+           <open> ::= *\
+\
+     <game-moves> ::= <move>[<move>]\
+           <move> ::= <move-num><white-move>[<black-move>]\
+       <move-num> ::= [1..n]\
+     <white-move> ::= <ply>\
+     <black-move> ::= <ply>\
+            <ply> ::= [<piece>][<file>][<rank>]<location>[<promotion>][<check>][<double-check>][<checkmate>] | <special-move>\
+          <piece> ::= K | Q | B | N | R\
+           <file> ::= a | b | c | d | e | f | g | h\
+           <rank> ::= 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8\
 #       <location> ::= <file><rank>
 #      <promotion> ::= <equals><promoted-piece>
 #         <equals> ::= =
