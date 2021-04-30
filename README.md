@@ -75,15 +75,25 @@ The regex breaks down into the following matches:
    ^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]*
 ```
 4. Piece captures WITHOUT a rank or file to resolve ambiquity, WITH promotion and optional check, double-check or mate:
-   *^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]\**
+```
+   ^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]*
+```
 5. Piece captures WITH a rank or file to resolve ambiquity, WITHOUT promotion and optional check, double-check or mate:
-   *^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]\**
+```
+   ^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]*
+```
 6. Piece captures WITHOUT a rank or file to resolve ambiquity, WITHOUT promotion and optional check, double-check or mate:
-   *^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]\**
+```
+   ^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]*
+```
 7. Move (non-capture) WITH promotion and optional check, double-check or mate:
-   *^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][=][QBNR][\\+#]\**
+```
+   ^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][=][QBNR][\\+#]*
+```
 8. Move (non-capture) WITHOUT promotion and optional check, double-check or mate:
-   *^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][\\+#]\**
+```
+   ^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][\\+#]*
+```
 
 
 ## Modification History:
