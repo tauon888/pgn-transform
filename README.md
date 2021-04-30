@@ -84,14 +84,14 @@ The regex breaks down into the following matches:
 8. Move (non-capture) WITHOUT promotion and optional check, double-check or mate:
    *^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][\\+#]\**
 
-### Resulting regex...\
-my $regex = "^O-O-O|^O-O|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][\\+#]*";
+### Resulting regex...
+my $regex = "^O-O-O|^O-O|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]\*|^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]\*|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][\\+#]\*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][=][QBNR][\\+#]\*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][\\+#]\*";
 
 ## Modification History:
-## Version  Date       Developer     Modification
-  1.0     13-Mar-21  M.R. Smith    Initial Verion, no statistics.\
-  1.1     23-Apr-21  M.R. Smith    Fixed regex to recognise take with promotion\
-                                   and optional check, double-check or mate.\
-  1.2     25-Apr-21  M.R. Smith    Add statistics to count wins and draws.\
-  1.3     28-Apr-21  M.R. Smith    Condense stats to a single hash.\
+| Version | Date      | Developer   | Modification Details                            |
+|---------|-----------|-------------|-------------------------------------------------|
+|  1.0    | 13-Mar-21 | M.R. Smith  | Initial Verion, no statistics.                  |
+|  1.1    | 23-Apr-21 | M.R. Smith  | Fixed regex to recognise take with promotion and optional check, double-check or mate. |
+|  1.2    | 25-Apr-21 | M.R. Smith  | Add statistics to count wins and draws.|
+|  1.3    | 28-Apr-21 | M.R. Smith  | Condense stats to a single hash.|
 
