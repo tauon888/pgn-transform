@@ -11,7 +11,11 @@ use warnings;
 #   M.R. Smith - 13-Mar-2021
 #
 # Usage:
-#   perl pgn-transform.pl [<inpfile>]
+#   perl pgn-transform.pl [<options>] [<inpfile>]
+#        <options> ::= <help> | <moves> | <debug>
+#           <help> ::= --help | -h
+#          <moves> ::= --moves <game-moves> | -m <game-moves>
+#          <debug> ::= --debug | -d
 #
 # Design:
 #   Parse a text file (defauts to games.txt) containing games in lichess format
@@ -101,6 +105,7 @@ use warnings;
 #                                   and optional check, double-check or mate.
 #  1.2     25-Apr-21  M.R. Smith    Add statistics to count wins and draws.
 #  1.3     28-Apr-21  M.R. Smith    Condense stats to a single hash.
+#  1.4     09-May-21  M.R. Smith    Added command switches to process a single string of moves.
 #
 
 my $regex = "^O-O-O|^O-O|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][\\+#]*";
@@ -111,131 +116,208 @@ my $regex = "^O-O-O|^O-O|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][Q
 #
 
 # Process the command line.
-# Support 2 parameters, input file of games and debug flag.
-my ($inpFile, $debug) = @ARGV;
-if (not defined $inpFile) {
-  $inpFile = "games.txt";
+# Iterate through the parameters, noting options and filename.
+my $debug = 0;
+my $help = 0;
+my $inpFile = "games.txt";
+my $gameMoves = "";
+my $i = 0;
+foreach my $param (@ARGV) {
+  # If the param begins with a - then it's an option.
+  if (substr($param, 0, 1) eq "-") {
+    if (($param eq "-d") || ($param eq "--debug")) { $debug = 1; }
+    if (($param eq "-h") || ($param eq "--help")) { $help = 1; }
+    if (($param eq "-m") || ($param eq "--moves")) {
+      $gameMoves = $ARGV[$i+1];
+      if ($debug) { print "Moves: $gameMoves\n"; }
+    }
+  } else {
+    $inpFile = $param;
+  }
+  $i++;
 }
-if (not defined $debug) { $debug = 0; }
 
 # Variables.
-my $title = "PGN Game Transformer for Lichess game strings V1.3";
-my ($fileName, $fileType) = split(/\./, $inpFile);
-my $outFile = "$fileName.pgn";
-my $csvFile = "$fileName.csv";
 my %stats = ();
+my $title = "PGN Game Transformer for Lichess game strings V1.4";
+if ($help) {
+  print "\n";
+  print "  Usage: perl pgn-transform.pl [<options>] [<inpfile>]\n";
+  print "\n";
+  print "    <options> ::= <help> | <moves> | <debug>\n";
+  print "       <help> ::= --help | -h\n";
+  print "      <moves> ::= --moves <game-moves> | -m <game-moves>\n";
+  print "      <debug> ::= --debug | -d\n";
+  print "\n";
+} elsif ($gameMoves eq "") {
+  print "$title...\n";
 
-print "$title Starting...\n";
-print "Input Game file: $inpFile\n";
-print "Output PGN file: $outFile\n";
-print "Output CSV file: $csvFile\n";
-print "Processing...\n";
+  my ($fileName, $fileType) = split(/\./, $inpFile);
+  my $outFile = "$fileName.pgn";
+  my $csvFile = "$fileName.csv";
 
-# Open the input text file of games.
-open INP, $inpFile or die "Can't open $inpFile\n";
+  print "Input Game file: $inpFile\n";
+  print "Output PGN file: $outFile\n";
+  print "Output CSV file: $csvFile\n";
+  print "Processing...\n";
 
-# Create the output text file of converted PGN.
-open OUT, ">$outFile" or die "Can't open $outFile\n";
-
-# Create the output CSV file for stats.
-open CSV, ">$csvFile" or die "Can't open $csvFile\n";
-
-# Read and process input file writing to output.
-my $moveNum = 1;
-my $moveStr = "";
-my $move = 1;
-my $moveLen = 1;
-my $idx = 0;
-my $game = 1;
-my $buffer = "";
-my $lineLen = 0;
-my $fin = "";
-my $comment = "";
-while (my $line = <INP>) {
-  chomp($line);
-  $line =~ s/^\s+|\s+$//g;
-  # Only process non-blank lines.
-  $lineLen = length($line);
-  if (($lineLen > 0) && (substr($line, 0, 1) ne "#")) {
-    print "I: $line\n";
-    # Process each line.
-
-    # If the line contains a result, process it and remember the outcome.
-    if ((substr($line, 2, 1) eq "\.") && (substr($line, 5, 1) eq "\.")) {
-      &printHeader($game, $line, \$fin, \$comment);
-      $game++;
-    } else {
-      $idx = 0;
-      while ($idx < $lineLen) {
-        # Extract the move number.
-        &extractMoveNumber($line, \$idx);
-
-        # Extract White's move.
-        &extractWhitesMove($line, \$idx);
-
-        if ($idx < $lineLen) {
-          # Extract Black's move.
-          &extractBlacksMove($line, \$idx);
-        } else {
-          &printNewline();
-        }
-        if ($debug) { &pause(); }
-      }
-      if ($comment ne "") {
-        &printLine("{$comment}");
-      }
-      &printLine($fin);
-      &printNewline();
-    }
-  }
+  &processGamesFile($inpFile, $outFile);
+  &displayAndLogStats($csvFile);
+  print "$title Complete\n";
+} else {
+  print "$title...\n";
+  &processMoves($gameMoves);
+  print "$title Complete\n";
 }
 
-# Print some stats and calculate totals.
-my $gameCount = 0;
-my $totalWins = 0;
-my $totalWinsAsWhite = 0;
-my $totalWinsAsBlack = 0;
-my $totalDraws = 0;
-print "Date        Played  Won  As White  As Black  Draws\n";
-print "==========  ======  ===  ========  ========  =====\n";
-foreach my $date (sort keys %stats) {
-  my ($games, $winsAsWhite, $winsAsBlack, $draws) = split(/\|/, $stats{$date});
-  my $wins = $winsAsWhite + $winsAsBlack;
-  #print "$date - $games played, $wins won, $winsAsWhite as white, $winsAsBlack as black, $draws draws\n";
-  print sprintf("$date  %4s%6s%8s%10s%8s", $games, $wins, $winsAsWhite, $winsAsBlack, $draws) . "\n";
-  print CSV "$date, $games, $wins, $winsAsWhite, $winsAsBlack, $draws\n";
-
-  # Running totals.
-  $gameCount += $games;
-  $totalWins += $wins;
-  $totalWinsAsWhite += $winsAsWhite;
-  $totalWinsAsBlack += $winsAsBlack;
-  $totalDraws += $draws;
-}
-
-# Compute percentages.
-my $pcentWins = sprintf("%.1f", $totalWins * 100 / $gameCount);
-my $pcentWinsAsWhite = sprintf("%.1f", $totalWinsAsWhite * 100 / $gameCount);
-my $pcentWinsAsBlack = sprintf("%.1f", $totalWinsAsBlack * 100 / $gameCount);
-my $pcentDraws = sprintf("%.1f", $totalDraws * 100 / $gameCount);
-
-# Print summary.
-print "$gameCount played, $totalWins won ($pcentWins%), $totalWinsAsWhite won as white ($pcentWinsAsWhite%), $totalWinsAsBlack won as black ($pcentWinsAsBlack%), $totalDraws draws ($pcentDraws%)\n";
-print CSV "Date, Played, Won, Won as White, Won as Black, Drawn\n";
-print CSV "\n";
-print CSV ", $gameCount played, $totalWins won ($pcentWins%), $totalWinsAsWhite won as white ($pcentWinsAsWhite%), $totalWinsAsBlack won as black ($pcentWinsAsBlack%), $totalDraws draws ($pcentDraws%)\n";
-
-# Close files.
-close CSV;
-close OUT;
-close INP;
-
-# Done.
-print "$title Complete\n";
 
 #
 # Subroutines.
 #
+sub processMoves {
+  my ($moves) = @_;
+  chomp($moves);
+  $moves =~ s/^\s+|\s+$//g;
+
+  print "Moves: $moves\n";
+  print "Processing...\n";
+
+  # Read and process input file writing to output.
+  my $moveNum = "";
+  my $move = "";
+  my $idx = 0;
+  my $lineLen = length($moves);
+  while ($idx < $lineLen) {
+    # Extract the move number.
+    $moveNum = &extractMoveNumber($moves, \$idx);
+    printStr("$moveNum. ", 0);
+
+    # Extract White's move.
+    $move = &extractWhitesMove($moves, \$idx);
+    printStr("$move ", 0);
+
+    if ($idx < $lineLen) {
+      # Extract Black's move.
+      $move = &extractBlacksMove($moves, \$idx);
+      printStr("$move\n", 0);
+    } else {
+      &printNewline(0);
+    }
+  }
+  &printNewline(0);
+}
+
+sub processGamesFile {
+  my ($inpFile, $outFile) = @_;
+
+  # Open the input text file of games.
+  open INP, $inpFile or die "Can't open $inpFile\n";
+
+  # Create the output text file of converted PGN.
+  open OUT, ">$outFile" or die "Can't open $outFile\n";
+
+  # Read and process input file writing to output.
+  my $moveNum = "";
+  my $moveStr = "";
+  my $move = "";
+  my $moveLen = 1;
+  my $idx = 0;
+  my $game = 1;
+  my $buffer = "";
+  my $lineLen = 0;
+  my $fin = "";
+  my $comment = "";
+  while (my $line = <INP>) {
+    chomp($line);
+    $line =~ s/^\s+|\s+$//g;
+    # Only process non-blank lines.
+    $lineLen = length($line);
+    if (($lineLen > 0) && (substr($line, 0, 1) ne "#")) {
+      print "I: $line\n";
+      # Process each line.
+
+      # If the line contains a result, process it and remember the outcome.
+      if ((substr($line, 2, 1) eq "\.") && (substr($line, 5, 1) eq "\.")) {
+        &printHeader($game, $line, \$fin, \$comment);
+        $game++;
+      } else {
+        $idx = 0;
+        while ($idx < $lineLen) {
+          # Extract the move number.
+          $moveNum = &extractMoveNumber($line, \$idx);
+          printStr("$moveNum. ", 1);
+
+          # Extract White's move.
+          $move = &extractWhitesMove($line, \$idx);
+          printStr("$move ", 1);
+
+          if ($idx < $lineLen) {
+            # Extract Black's move.
+            $move = &extractBlacksMove($line, \$idx);
+            printStr("$move\n", 1);
+          } else {
+            &printNewline(1);
+          }
+          if ($debug) { &pause(); }
+        }
+        if ($comment ne "") {
+          &printStr("{$comment}\n", 1);
+        }
+        &printStr("$fin\n", 1);
+        &printNewline(1);
+      }
+    }
+  }
+
+  # Close files.
+  close OUT;
+  close INP;
+}
+
+sub displayAndLogStats {
+  my ($csvFile) = @_;
+
+  # Create the output CSV file for stats.
+  open CSV, ">$csvFile" or die "Can't open $csvFile\n";
+
+  # Print some stats and calculate totals.
+  my $gameCount = 0;
+  my $totalWins = 0;
+  my $totalWinsAsWhite = 0;
+  my $totalWinsAsBlack = 0;
+  my $totalDraws = 0;
+  print "Date        Played  Won  As White  As Black  Draws\n";
+  print "==========  ======  ===  ========  ========  =====\n";
+  foreach my $date (sort keys %stats) {
+    my ($games, $winsAsWhite, $winsAsBlack, $draws) = split(/\|/, $stats{$date});
+    my $wins = $winsAsWhite + $winsAsBlack;
+    #print "$date - $games played, $wins won, $winsAsWhite as white, $winsAsBlack as black, $draws draws\n";
+    print sprintf("$date  %4s%6s%8s%10s%8s", $games, $wins, $winsAsWhite, $winsAsBlack, $draws) . "\n";
+    print CSV "$date, $games, $wins, $winsAsWhite, $winsAsBlack, $draws\n";
+
+    # Running totals.
+    $gameCount += $games;
+    $totalWins += $wins;
+    $totalWinsAsWhite += $winsAsWhite;
+    $totalWinsAsBlack += $winsAsBlack;
+    $totalDraws += $draws;
+  }
+
+  # Compute percentages.
+  my $pcentWins = sprintf("%.1f", $totalWins * 100 / $gameCount);
+  my $pcentWinsAsWhite = sprintf("%.1f", $totalWinsAsWhite * 100 / $gameCount);
+  my $pcentWinsAsBlack = sprintf("%.1f", $totalWinsAsBlack * 100 / $gameCount);
+  my $pcentDraws = sprintf("%.1f", $totalDraws * 100 / $gameCount);
+
+  # Print summary.
+  print "$gameCount played, $totalWins won ($pcentWins%), $totalWinsAsWhite won as white ($pcentWinsAsWhite%), $totalWinsAsBlack won as black ($pcentWinsAsBlack%), $totalDraws draws ($pcentDraws%)\n";
+  print CSV "Date, Played, Won, Won as White, Won as Black, Drawn\n";
+  print CSV "\n";
+  print CSV ", $gameCount played, $totalWins won ($pcentWins%), $totalWinsAsWhite won as white ($pcentWinsAsWhite%), $totalWinsAsBlack won as black ($pcentWinsAsBlack%), $totalDraws draws ($pcentDraws%)\n";
+
+  close CSV;
+}
+
 sub printHeader {
   my ($gameCount, $result, $resultRef, $commentRef) = @_;
 
@@ -303,7 +385,6 @@ sub printHeader {
     &updateStats($date, 0, 0, 1);
   }
 
-
   return;
 }
 
@@ -333,21 +414,25 @@ sub printLine {
   print "$str\n";
 }
 
+sub printStr {
+  my ($str, $oFlag) = @_;
+  if ($oFlag) { print OUT "$str"; }
+  print "$str";
+}
+
 sub printNewline {
-  print OUT "\n";
+  my ($oFlag) = @_;
+  if ($oFlag) { print OUT "\n"; }
   print "\n";
 }
 
 sub extractMoveNumber {
     my ($string, $idxRef) = @_;
+
     my $buffer = substr($string, $$idxRef);
-    #print "Buffer: $buffer\n";
     my $regex1 = "\\d*";
-    #print "Regex: $regex\n";
     my ($result) = ($buffer =~ m/($regex1)/);
-    if ($debug) { print "Move: $result\n"; }
-    print OUT $result, ".";
-    print $result, ". ";
+    if ($debug) { print "Move number: $result\n"; }
     # Increment the index to point beyond the move number.
     $$idxRef = $$idxRef + length($result);
     return $result;
@@ -355,18 +440,18 @@ sub extractMoveNumber {
 
 sub extractWhitesMove {
     my ($string, $idxRef) = @_;
+
     my $move = &extractMove($string, $idxRef);
-    print OUT $move, " ";
-    print $move, " ";
+    # Increment the index to point beyond the move.
     $$idxRef = $$idxRef + length($move);
     return $move;
 }
 
 sub extractBlacksMove {
     my ($string, $idxRef) = @_;
+
     my $move = &extractMove($string, $idxRef);
-    print OUT $move, " ";
-    print $move, "\n";
+    # Increment the index to point beyond the move.
     $$idxRef = $$idxRef + length($move);
     return $move;
 }
@@ -375,14 +460,11 @@ sub extractMove {
     my ($string, $idxRef) = @_;
     my $buffer = substr($string, $$idxRef);
     if ($debug) { print "\nbuf: $buffer\n"; }
-    #my $regex = "^O-O-O|^O-O|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][\\+#]*";
-    #print "Regex: $regex\n";
     my ($result) = ($buffer =~ m/($regex)/);
     if (not defined $result) {
       print "No Match - Buffer: $buffer\n";
       exit 1;
     }
-    #print "emResult: $result\n";
     return $result;
 }
 
