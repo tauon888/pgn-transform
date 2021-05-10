@@ -100,7 +100,7 @@ use warnings;
 #
 # Modification History:
 # Version  Date       Developer     Modification
-#  1.0     13-Mar-21  M.R. Smith    Initial Verion, no statistics.
+#  1.0     13-Mar-21  M.R. Smith    Initial Version, no statistics.
 #  1.1     23-Apr-21  M.R. Smith    Fixed regex to recognise take with promotion
 #                                   and optional check, double-check or mate.
 #  1.2     25-Apr-21  M.R. Smith    Add statistics to count wins and draws.
@@ -109,11 +109,6 @@ use warnings;
 #
 
 my $regex = "^O-O-O|^O-O|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][\\+#]*";
-
-#
-# To Do:
-# - Prune down temporary variables.
-#
 
 # Process the command line.
 # Iterate through the parameters, noting options and filename.
@@ -218,12 +213,8 @@ sub processGamesFile {
 
   # Read and process input file writing to output.
   my $moveNum = "";
-  my $moveStr = "";
   my $move = "";
-  my $moveLen = 1;
-  my $idx = 0;
   my $game = 1;
-  my $buffer = "";
   my $lineLen = 0;
   my $fin = "";
   my $comment = "";
@@ -241,7 +232,7 @@ sub processGamesFile {
         &printHeader($game, $line, \$fin, \$comment);
         $game++;
       } else {
-        $idx = 0;
+        my $idx = 0;
         while ($idx < $lineLen) {
           # Extract the move number.
           $moveNum = &extractMoveNumber($line, \$idx);
