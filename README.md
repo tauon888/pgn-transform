@@ -8,9 +8,13 @@ This script will convert chess games copied from lichess.com to a text files to 
 
 ## Usage:
 ```
-   perl pgn-transform.pl [<inpfile>]
+   perl pgn-transform.pl [<options>] [<inpfile>]
+        <options> ::= <help> | <moves> | <debug>
+           <help> ::= --help | -h
+          <moves> ::= --moves <game-moves> | -m <game-moves>
+          <debug> ::= --debug | -d
 ```
-## Example:
+## Example 1 (a file of games):
 ```
 $ perl pgn-transform.pl test.txt
 PGN Game Transformer for Lichess game strings V1.3 Starting...
@@ -89,6 +93,71 @@ Date        Played  Won  As White  As Black  Draws
 PGN Game Transformer for Lichess game strings V1.3 Complete
 ```
 
+## Example 2 (a string of moves):
+```
+$ perl pgn-transform.pl  -m 1e3d52Be2Bf53Nf3e64d3c65e4dxe46dxe4Qxd1+7Bxd1Bxe48O-OBc59Nc3Bf510Na4Be711Bg5Nf612Bxf6Bxf613Nc5O-O14Nxb7Nd715Nd6Bg616Rb1Rab817b3Nc518Nc4Rfd819Na5Be420Nd2Bd521c4Be422Nxe4Nxe423Rb2Rxd124Rxd1Bxb225Nxc6Rf826Nxa7Nc327Rd2Ba328Rc2Ne429Nc6Bc530b4Bxf2+31Rxf2Nxf232Kxf2Ra833Na5Kf834a3Ke735c5Kd736c6+Kc737Ke3Rd838b5Rd539b6+Kxb640c7Kxa541c8=QRe5+42Kf3Rf5+43Kg4Rd544Qa8+Kb645Qb8+Kc546Qc7+Kd447Qa7+Ke548a4f5+49Kg5h6+50Kg6f451a5Ke452a6Rg5+53Kh7g654Kxh6Rg455Qb7+Kf556a7Kf6
+PGN Game Transformer for Lichess game strings V1.4...
+Moves: 1e3d52Be2Bf53Nf3e64d3c65e4dxe46dxe4Qxd1+7Bxd1Bxe48O-OBc59Nc3Bf510Na4Be711Bg5Nf612Bxf6Bxf613Nc5O-O14Nxb7Nd715Nd6Bg616Rb1Rab817b3Nc518Nc4Rfd819Na5Be420Nd2Bd521c4Be422Nxe4Nxe423Rb2Rxd124Rxd1Bxb225Nxc6Rf826Nxa7Nc327Rd2Ba328Rc2Ne429Nc6Bc530b4Bxf2+31Rxf2Nxf232Kxf2Ra833Na5Kf834a3Ke735c5Kd736c6+Kc737Ke3Rd838b5Rd539b6+Kxb640c7Kxa541c8=QRe5+42Kf3Rf5+43Kg4Rd544Qa8+Kb645Qb8+Kc546Qc7+Kd447Qa7+Ke548a4f5+49Kg5h6+50Kg6f451a5Ke452a6Rg5+53Kh7g654Kxh6Rg455Qb7+Kf556a7Kf6
+Processing...
+1. e3 d5
+2. Be2 Bf5
+3. Nf3 e6
+4. d3 c6
+5. e4 dxe4
+6. dxe4 Qxd1+
+7. Bxd1 Bxe4
+8. O-O Bc5
+9. Nc3 Bf5
+10. Na4 Be7
+11. Bg5 Nf6
+12. Bxf6 Bxf6
+13. Nc5 O-O
+14. Nxb7 Nd7
+15. Nd6 Bg6
+16. Rb1 Rab8
+17. b3 Nc5
+18. Nc4 Rfd8
+19. Na5 Be4
+20. Nd2 Bd5
+21. c4 Be4
+22. Nxe4 Nxe4
+23. Rb2 Rxd1
+24. Rxd1 Bxb2
+25. Nxc6 Rf8
+26. Nxa7 Nc3
+27. Rd2 Ba3
+28. Rc2 Ne4
+29. Nc6 Bc5
+30. b4 Bxf2+
+31. Rxf2 Nxf2
+32. Kxf2 Ra8
+33. Na5 Kf8
+34. a3 Ke7
+35. c5 Kd7
+36. c6+ Kc7
+37. Ke3 Rd8
+38. b5 Rd5
+39. b6+ Kxb6
+40. c7 Kxa5
+41. c8=Q Re5+
+42. Kf3 Rf5+
+43. Kg4 Rd5
+44. Qa8+ Kb6
+45. Qb8+ Kc5
+46. Qc7+ Kd4
+47. Qa7+ Ke5
+48. a4 f5+
+49. Kg5 h6+
+50. Kg6 f4
+51. a5 Ke4
+52. a6 Rg5+
+53. Kh7 g6
+54. Kxh6 Rg4
+55. Qb7+ Kf5
+56. a7 Kf6
+
+PGN Game Transformer for Lichess game strings V1.4 Complete
+```
 
 ## Design:
 Parse a text file (defauts to games.txt) containing games in lichess format and write an output PGN file (defaults to the same names as the input file
@@ -184,4 +253,5 @@ The regex breaks down into the following matches:
 |  1.1    | 23-Apr-21 | M.R. Smith  | Fixed regex to recognise take with promotion and optional check, double-check or mate. |
 |  1.2    | 25-Apr-21 | M.R. Smith  | Add statistics to count wins and draws.|
 |  1.3    | 28-Apr-21 | M.R. Smith  | Condense stats to a single hash.|
+|  1.4    | 09-May-21 | M.R. Smith  | Added command switches to process a single string of moves.|
 
