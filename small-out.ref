@@ -1,0 +1,360 @@
+PGN Game Transformer for Lichess game strings V1.4...
+Input Game file: small.txt
+Output PGN file: small.pgn
+Output CSV file: small.csv
+Processing...
+I: 21.03.14B0-1Queen escapes from a pin!
+[Event "lichess.com"]
+[Site "lichess.com"]
+[Date "2021.03.14"]
+[Round "1"]
+[White "Anon"]
+[Black "Mike"]
+[Result "0-1"]
+I: 1d4d52e3Bf53h3e64a3Nf65Nf3c66Nc3Qc77Nh4Bg68Nf5Bxf59Bd3Bg610O-OBd611Re1Ne412Qf3Nd713Ne2Ndf614Nf4Ng515Qe2O-O-O16c4Bxf417exf4Nxh3+18gxh3Ne419cxd5exd520b4Bf521b5Bxh322bxc6bxc623Ba6+Kd724Rb1Rb825Bd2g526Qf3g427Qe3f528Rb3Rhg829Reb1g330Rb7gxf2+31Kh2f1=N+32Rxf1Rxb733Kxh3Rg3+34Qxg3Nxg335Kxg3Rb236Be3Qb637Bd3Rb338Bxf5+Kd639Re1Qxd440Kf2Qb2+41Kf3Qh242Re2Qh5+43Bg4Qg644f5Qf645Kf2h546Bf4+Kd747Bf3Qxf548Be3Rxe349Rxe3h450Ke2Qc2+
+1. d4 d5
+2. e3 Bf5
+3. h3 e6
+4. a3 Nf6
+5. Nf3 c6
+6. Nc3 Qc7
+7. Nh4 Bg6
+8. Nf5 Bxf5
+9. Bd3 Bg6
+10. O-O Bd6
+11. Re1 Ne4
+12. Qf3 Nd7
+13. Ne2 Ndf6
+14. Nf4 Ng5
+15. Qe2 O-O-O
+16. c4 Bxf4
+17. exf4 Nxh3+
+18. gxh3 Ne4
+19. cxd5 exd5
+20. b4 Bf5
+21. b5 Bxh3
+22. bxc6 bxc6
+23. Ba6+ Kd7
+24. Rb1 Rb8
+25. Bd2 g5
+26. Qf3 g4
+27. Qe3 f5
+28. Rb3 Rhg8
+29. Reb1 g3
+30. Rb7 gxf2+
+31. Kh2 f1=N+
+32. Rxf1 Rxb7
+33. Kxh3 Rg3+
+34. Qxg3 Nxg3
+35. Kxg3 Rb2
+36. Be3 Qb6
+37. Bd3 Rb3
+38. Bxf5+ Kd6
+39. Re1 Qxd4
+40. Kf2 Qb2+
+41. Kf3 Qh2
+42. Re2 Qh5+
+43. Bg4 Qg6
+44. f5 Qf6
+45. Kf2 h5
+46. Bf4+ Kd7
+47. Bf3 Qxf5
+48. Be3 Rxe3
+49. Rxe3 h4
+50. Ke2 Qc2+
+{Queen escapes from a pin!}
+0-1
+
+I: 21.03.14B0-1Short win but lost bishop to pawns
+[Event "lichess.com"]
+[Site "lichess.com"]
+[Date "2021.03.14"]
+[Round "2"]
+[White "Anon"]
+[Black "Mike"]
+[Result "0-1"]
+I: 1d4d52c4Bf53e3e64Nc3Bb45Bd2Nc66c5Nf67a3Ba58b4Nxb49axb4Bxb410Nf3a511Nh4Bg612Nxg6hxg613e4Bxc314Bxc3Nxe415Bb2Qf616Bd3Qxf2
+1. d4 d5
+2. c4 Bf5
+3. e3 e6
+4. Nc3 Bb4
+5. Bd2 Nc6
+6. c5 Nf6
+7. a3 Ba5
+8. b4 Nxb4
+9. axb4 Bxb4
+10. Nf3 a5
+11. Nh4 Bg6
+12. Nxg6 hxg6
+13. e4 Bxc3
+14. Bxc3 Nxe4
+15. Bb2 Qf6
+16. Bd3 Qxf2
+{Short win but lost bishop to pawns}
+0-1
+
+I: 21.03.14B0-1Game 1
+[Event "lichess.com"]
+[Site "lichess.com"]
+[Date "2021.03.14"]
+[Round "3"]
+[White "Anon"]
+[Black "Mike"]
+[Result "0-1"]
+I: 1g4d52Bg2e53c4Bxg44Bxd5c65Bg2f56Nc3Bb47Qb3Na68a3Bxc39Qxc3Qd410Qb3Nc511Qb4O-O-O12Nf3Bxf313Bxf3e414Bg2Nf615f3exf316Bxf3Rhe8
+1. g4 d5
+2. Bg2 e5
+3. c4 Bxg4
+4. Bxd5 c6
+5. Bg2 f5
+6. Nc3 Bb4
+7. Qb3 Na6
+8. a3 Bxc3
+9. Qxc3 Qd4
+10. Qb3 Nc5
+11. Qb4 O-O-O
+12. Nf3 Bxf3
+13. Bxf3 e4
+14. Bg2 Nf6
+15. f3 exf3
+16. Bxf3 Rhe8
+{Game 1}
+0-1
+
+I: 21.03.14B0-1Game 2
+[Event "lichess.com"]
+[Site "lichess.com"]
+[Date "2021.03.14"]
+[Round "4"]
+[White "Anon"]
+[Black "Mike"]
+[Result "0-1"]
+I: 1e4c52c3g63d4d64d5Bg75c4Nf66Nc3Qa57Bd2Qb68Qb3Qxb39axb3Na610Nb5O-O11Nf3Nxe412Bd3Nxd213Nxd2Bxb214Rb1Bg715O-ONb416Be2a617Na3b518cxb5a519f4Nxd520f5Bxf521Bc4Ne322Rfe1Bd423Nf3Bxb124Nxd4cxd425Nxb1d526Bd3e527Nd2f528Kf2e429Bb1Ng4+30Kg3d331h3Ne532Kf4Rfe833Ba2Kg734b4g5+35Kxg5Red836Kxf5Ng637Ke6axb438Bxd5Nf4+39Ke5Nxd540Nxe4Nc341Nc5Re8+42Ne6+Kg643Rf1Rxe6+44Kxe6Re8+45Kd6d246b6d1=Q+47Rxd1Nxd148b7Kf649Kc7Nc350b8=Q
+1. e4 c5
+2. c3 g6
+3. d4 d6
+4. d5 Bg7
+5. c4 Nf6
+6. Nc3 Qa5
+7. Bd2 Qb6
+8. Qb3 Qxb3
+9. axb3 Na6
+10. Nb5 O-O
+11. Nf3 Nxe4
+12. Bd3 Nxd2
+13. Nxd2 Bxb2
+14. Rb1 Bg7
+15. O-O Nb4
+16. Be2 a6
+17. Na3 b5
+18. cxb5 a5
+19. f4 Nxd5
+20. f5 Bxf5
+21. Bc4 Ne3
+22. Rfe1 Bd4
+23. Nf3 Bxb1
+24. Nxd4 cxd4
+25. Nxb1 d5
+26. Bd3 e5
+27. Nd2 f5
+28. Kf2 e4
+29. Bb1 Ng4+
+30. Kg3 d3
+31. h3 Ne5
+32. Kf4 Rfe8
+33. Ba2 Kg7
+34. b4 g5+
+35. Kxg5 Red8
+36. Kxf5 Ng6
+37. Ke6 axb4
+38. Bxd5 Nf4+
+39. Ke5 Nxd5
+40. Nxe4 Nc3
+41. Nc5 Re8+
+42. Ne6+ Kg6
+43. Rf1 Rxe6+
+44. Kxe6 Re8+
+45. Kd6 d2
+46. b6 d1=Q+
+47. Rxd1 Nxd1
+48. b7 Kf6
+49. Kc7 Nc3
+50. b8=Q 
+{Game 2}
+0-1
+
+I: 21.03.14B0-1Game 3
+[Event "lichess.com"]
+[Site "lichess.com"]
+[Date "2021.03.14"]
+[Round "5"]
+[White "Anon"]
+[Black "Mike"]
+[Result "0-1"]
+I: 1d4d52Bf4e63Nf3f54e3Nf65c3Nbd76Bb5c67Ba4b58Bb3a59a4b410c4Be711cxd5cxd512Nbd2Ba613Rc1Ne414Nxe4fxe415Ne5Nxe516Bxe5O-O17Qg4Rc818Qxg7
+1. d4 d5
+2. Bf4 e6
+3. Nf3 f5
+4. e3 Nf6
+5. c3 Nbd7
+6. Bb5 c6
+7. Ba4 b5
+8. Bb3 a5
+9. a4 b4
+10. c4 Be7
+11. cxd5 cxd5
+12. Nbd2 Ba6
+13. Rc1 Ne4
+14. Nxe4 fxe4
+15. Ne5 Nxe5
+16. Bxe5 O-O
+17. Qg4 Rc8
+18. Qxg7 
+{Game 3}
+0-1
+
+I: 21.03.14B0-1Game 4
+[Event "lichess.com"]
+[Site "lichess.com"]
+[Date "2021.03.14"]
+[Round "6"]
+[White "Anon"]
+[Black "Mike"]
+[Result "0-1"]
+I: 1d4d52e3Bf53b3e64c4Bb4+5Ke2dxc46Nf3Bd3+7Qxd3cxd3+8Kxd3Nc69Nc3f610Nb5e511Nc3Nh612Nh4O-O13f4exd414exd4Qxd4+15Kc2Qxc3+16Kb1Rfe817Bb5Re118Rxe1Qxe119Kb2Nd420Be8Qc3+21Kb1Qc2
+1. d4 d5
+2. e3 Bf5
+3. b3 e6
+4. c4 Bb4+
+5. Ke2 dxc4
+6. Nf3 Bd3+
+7. Qxd3 cxd3+
+8. Kxd3 Nc6
+9. Nc3 f6
+10. Nb5 e5
+11. Nc3 Nh6
+12. Nh4 O-O
+13. f4 exd4
+14. exd4 Qxd4+
+15. Kc2 Qxc3+
+16. Kb1 Rfe8
+17. Bb5 Re1
+18. Rxe1 Qxe1
+19. Kb2 Nd4
+20. Be8 Qc3+
+21. Kb1 Qc2
+{Game 4}
+0-1
+
+I: 21.03.14B0-1Game 5
+[Event "lichess.com"]
+[Site "lichess.com"]
+[Date "2021.03.14"]
+[Round "7"]
+[White "Anon"]
+[Black "Mike"]
+[Result "0-1"]
+I: 1d4d52Bf4Nc63e3Nf64Bb5Bd75c3a66Ba4b57Bb3Na58Bc2c69Nf3Bg410h3Bxf311Qxf3e612Bg5h613Bh4g514Bg3h515Be5Bg716Nd2g417hxg4hxg418Rxh8+Bxh819Qf4Bg720Qg5Kf821O-O-ONc422Nxc4bxc423Rh1Qe724Rh7Nxh725Qxg7+Ke8
+1. d4 d5
+2. Bf4 Nc6
+3. e3 Nf6
+4. Bb5 Bd7
+5. c3 a6
+6. Ba4 b5
+7. Bb3 Na5
+8. Bc2 c6
+9. Nf3 Bg4
+10. h3 Bxf3
+11. Qxf3 e6
+12. Bg5 h6
+13. Bh4 g5
+14. Bg3 h5
+15. Be5 Bg7
+16. Nd2 g4
+17. hxg4 hxg4
+18. Rxh8+ Bxh8
+19. Qf4 Bg7
+20. Qg5 Kf8
+21. O-O-O Nc4
+22. Nxc4 bxc4
+23. Rh1 Qe7
+24. Rh7 Nxh7
+25. Qxg7+ Ke8
+{Game 5}
+0-1
+
+I: 21.03.14W1-0
+[Event "lichess.com"]
+[Site "lichess.com"]
+[Date "2021.03.14"]
+[Round "8"]
+[White "Mike"]
+[Black "Anon"]
+[Result "1-0"]
+I: 1d4Nc62Bf4d63e3e54dxe5g55Bg3f56Bb5d57c4d48exd4a69Ba4b510cxb5axb511Bxb5Bd712d5Nb413Bxd7+Qxd714d6Ra515Qh5+Kd816Nc3Nc2+17Ke2Nxa118Nf3Nc219Rd1c620Qxg5+Be721dxe7+Nxe722Rxd7+Kxd723Qf6Rg824Qd6+Ke825e6Nd4+26Nxd4Re5+27Bxe5Rg428Qd7+Kf829Qd8#
+1. d4 Nc6
+2. Bf4 d6
+3. e3 e5
+4. dxe5 g5
+5. Bg3 f5
+6. Bb5 d5
+7. c4 d4
+8. exd4 a6
+9. Ba4 b5
+10. cxb5 axb5
+11. Bxb5 Bd7
+12. d5 Nb4
+13. Bxd7+ Qxd7
+14. d6 Ra5
+15. Qh5+ Kd8
+16. Nc3 Nc2+
+17. Ke2 Nxa1
+18. Nf3 Nc2
+19. Rd1 c6
+20. Qxg5+ Be7
+21. dxe7+ Nxe7
+22. Rxd7+ Kxd7
+23. Qf6 Rg8
+24. Qd6+ Ke8
+25. e6 Nd4+
+26. Nxd4 Re5+
+27. Bxe5 Rg4
+28. Qd7+ Kf8
+29. Qd8# 
+1-0
+
+I: 21.03.15W1-0
+[Event "lichess.com"]
+[Site "lichess.com"]
+[Date "2021.03.15"]
+[Round "9"]
+[White "Mike"]
+[Black "Anon"]
+[Result "1-0"]
+I: 1d4d52c4Bf53c5c64Bf4Nd75e3e66Nc3Ngf67Be2Ne48Nf3Be79h3O-O10g4Bg611h4b612h5Nxc313bxc3Be414Bd3bxc515Bxe4dxe416Ne5cxd417Nxc6Qc818Nxe7
+1. d4 d5
+2. c4 Bf5
+3. c5 c6
+4. Bf4 Nd7
+5. e3 e6
+6. Nc3 Ngf6
+7. Be2 Ne4
+8. Nf3 Be7
+9. h3 O-O
+10. g4 Bg6
+11. h4 b6
+12. h5 Nxc3
+13. bxc3 Be4
+14. Bd3 bxc5
+15. Bxe4 dxe4
+16. Ne5 cxd4
+17. Nxc6 Qc8
+18. Nxe7 
+1-0
+
+Date        Played  Won  As White  As Black  Draws
+==========  ======  ===  ========  ========  =====
+2021.03.14     8     8       1         7       0
+2021.03.15     1     1       1         0       0
+9 played, 9 won (100.0%), 2 won as white (22.2%), 7 won as black (77.8%), 0 draws (0.0%)
+PGN Game Transformer for Lichess game strings V1.4 Complete

@@ -1,0 +1,74 @@
+PGN Game Transformer for Lichess game strings V1.4...
+Input Game file: test.txt
+Output PGN file: test.pgn
+Output CSV file: test.csv
+Processing...
+I: 21.04.07W1-0pp
+[Event "lichess.com"]
+[Site "lichess.com"]
+[Date "2021.04.07"]
+[Round "1"]
+[White "Mike"]
+[Black "Anon"]
+[Result "1-0"]
+I: 1d4d52Bf4c63Nf3e64e3h65c3Nf66h3Be77Bd3Nbd78Qc2O-O9Nbd2c510O-O-Oc411Be2Qa512Kb1Qb513Rdg1Nb614g4Na415g5h516gxf6Bxf617Be5Bxe518Nxe5Qa519Bxh5b520Nc6Qc721Nb4a522b3axb423bxa4bxa424cxb4Rb825a3Qe726Qc3Qh427Bd1Qxf228h4Qf5+29Bc2Qh530Rg5Qe231h5f632Rg6Kh733Rhg1Kh834Rxg7Rb735h6Rxg736hxg7+Kg837gxf8=Q+Kxf838Rg6Kf739b5f540Rg1Qf241Rf1Qe242Bxa4Bb743b6Kf644Bd1Qd3+45Qxd3cxd346a4Ke747a5Kd748Ba4+Kc849Rh1Ba650Rh8+Kb751Rh7+Kb852Rc7
+1. d4 d5
+2. Bf4 c6
+3. Nf3 e6
+4. e3 h6
+5. c3 Nf6
+6. h3 Be7
+7. Bd3 Nbd7
+8. Qc2 O-O
+9. Nbd2 c5
+10. O-O-O c4
+11. Be2 Qa5
+12. Kb1 Qb5
+13. Rdg1 Nb6
+14. g4 Na4
+15. g5 h5
+16. gxf6 Bxf6
+17. Be5 Bxe5
+18. Nxe5 Qa5
+19. Bxh5 b5
+20. Nc6 Qc7
+21. Nb4 a5
+22. b3 axb4
+23. bxa4 bxa4
+24. cxb4 Rb8
+25. a3 Qe7
+26. Qc3 Qh4
+27. Bd1 Qxf2
+28. h4 Qf5+
+29. Bc2 Qh5
+30. Rg5 Qe2
+31. h5 f6
+32. Rg6 Kh7
+33. Rhg1 Kh8
+34. Rxg7 Rb7
+35. h6 Rxg7
+36. hxg7+ Kg8
+37. gxf8=Q+ Kxf8
+38. Rg6 Kf7
+39. b5 f5
+40. Rg1 Qf2
+41. Rf1 Qe2
+42. Bxa4 Bb7
+43. b6 Kf6
+44. Bd1 Qd3+
+45. Qxd3 cxd3
+46. a4 Ke7
+47. a5 Kd7
+48. Ba4+ Kc8
+49. Rh1 Ba6
+50. Rh8+ Kb7
+51. Rh7+ Kb8
+52. Rc7 
+{pp}
+1-0
+
+Date        Played  Won  As White  As Black  Draws
+==========  ======  ===  ========  ========  =====
+2021.04.07     1     1       1         0       0
+1 played, 1 won (100.0%), 1 won as white (100.0%), 0 won as black (0.0%), 0 draws (0.0%)
+PGN Game Transformer for Lichess game strings V1.4 Complete
