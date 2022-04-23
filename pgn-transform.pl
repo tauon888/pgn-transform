@@ -106,6 +106,8 @@ use warnings;
 #  1.2     25-Apr-21  M.R. Smith    Add statistics to count wins and draws.
 #  1.3     28-Apr-21  M.R. Smith    Condense stats to a single hash.
 #  1.4     09-May-21  M.R. Smith    Added command switches to process a single string of moves.
+#  1.5     07-Aug-21  M.R. Smith    Fix header (at the top) of CSV file.
+#                                   Fix initialisation of result and comment.
 #
 
 my $regex = "^O-O-O|^O-O|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR][abcdefgh12345678]?[x][abcdefgh][12345678][\\+#]*|^[KQBNRabcdefgh][x][abcdefgh][12345678][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][=][QBNR][\\+#]*|^[KQBNR]?([abcdefgh]?|[12345678]?)[abcdefgh][12345678][\\+#]*";
@@ -134,7 +136,7 @@ foreach my $param (@ARGV) {
 
 # Variables.
 my %stats = ();
-my $title = "PGN Game Transformer for Lichess game strings V1.4";
+my $title = "PGN Transformer for Lichess game strings V1.5";
 if ($help) {
   print "\n";
   print "  Usage: perl pgn-transform.pl [<options>] [<inpfile>]\n";
@@ -229,6 +231,8 @@ sub processGamesFile {
 
       # If the line contains a result, process it and remember the outcome.
       if ((substr($line, 2, 1) eq "\.") && (substr($line, 5, 1) eq "\.")) {
+        $fin = "";
+        $comment = "";
         &printHeader($game, $line, \$fin, \$comment);
         $game++;
       } else {
@@ -270,6 +274,7 @@ sub displayAndLogStats {
 
   # Create the output CSV file for stats.
   open CSV, ">$csvFile" or die "Can't open $csvFile\n";
+  print CSV "Date, Played, Won, Won as White, Won as Black, Drawn\n";
 
   # Print some stats and calculate totals.
   my $gameCount = 0;
@@ -302,8 +307,6 @@ sub displayAndLogStats {
 
   # Print summary.
   print "$gameCount played, $totalWins won ($pcentWins%), $totalWinsAsWhite won as white ($pcentWinsAsWhite%), $totalWinsAsBlack won as black ($pcentWinsAsBlack%), $totalDraws draws ($pcentDraws%)\n";
-  print CSV "Date, Played, Won, Won as White, Won as Black, Drawn\n";
-  print CSV "\n";
   print CSV ", $gameCount played, $totalWins won ($pcentWins%), $totalWinsAsWhite won as white ($pcentWinsAsWhite%), $totalWinsAsBlack won as black ($pcentWinsAsBlack%), $totalDraws draws ($pcentDraws%)\n";
 
   close CSV;
